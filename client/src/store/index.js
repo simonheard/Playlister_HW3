@@ -1,5 +1,10 @@
 import { createContext, useState } from 'react'
 import jsTPS from '../common/jsTPS'
+// OUR TRANSACTIONS
+import MoveSong_Transaction from '../transactions/MoveSong_Transaction.js';
+import AddSong_Transaction from '../transactions/AddSong_Transaction.js';
+import DeleteSong_Transaction from '../transactions/DeleteSong_Transaction.js';
+import EditSong_Transaction from '../transactions/EditSong_Transaction.js';
 import api from '../api'
 export const GlobalStoreContext = createContext({});
 /*
@@ -208,11 +213,38 @@ export const useGlobalStore = () => {
     store.getPlaylistSize = function() {
         return store.currentList.songs.length;
     }
+    store.updateCurrentList = function () {
+        async function asyncUpdateCurrentList() {
+            const response = await api.updatePlaylistById(store.currentList._id, store.currentList);
+            if (response.data.success) {
+                storeReducer({
+                    type: GlobalStoreActionType.SET_CURRENT_LIST,
+                    payload: store.currentList
+                });
+            }
+        }
+        asyncUpdateCurrentList();
+    }
     store.undo = function () {
         tps.undoTransaction();
     }
     store.redo = function () {
         tps.doTransaction();
+    }
+    store.addAddSongTransaction = function () {
+        let transaction = new AddSong_Transaction(store);
+        tps.addTransaction(transaction);
+    }
+    store.addSong = function () {
+        let list = store.currentList;
+        let newSong = {title: "Untitled", artist: "Unknown", youTubeId: "dQw4w9WgXcQ"};
+        list.songs.push(newSong);
+        store.updateCurrentList();
+    }
+    store.undoAddSong = function () {
+        let list = store.currentList;
+        list.songs.pop();
+        store.updateCurrentList();
     }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME

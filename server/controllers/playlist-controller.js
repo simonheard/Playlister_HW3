@@ -54,6 +54,7 @@ updatePlaylistById = async (req, res) => {
             return res.status(400).json({ success: false, error: err })
         }
         list.name = body.name
+        list.songs = body.songs
         list
             .save()
             .then(() => {
