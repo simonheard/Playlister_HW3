@@ -113,7 +113,6 @@ export const useGlobalStore = () => {
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = function (id, newName) {
         // GET THE LIST
-        console.log("List ID: ", id, "; list newName: ", newName);
         async function asyncChangeListName(id) {
             let response = await api.getPlaylistById(id);
             if (response.data.success) {
@@ -154,11 +153,20 @@ export const useGlobalStore = () => {
 
     //THIS FUNCTION CREATE NEW LIST AND OPEN THE LIST PAGE
     //*********LACK IMPLEMENTATION ***********/
-    store.createNewList = function () {
-        storeReducer({
-            type: GlobalStoreActionType.CREATE_NEW_LIST,
-            payload: {}
-        });
+    store.createPlaylist = function () {
+        async function asyncCreatePlaylist() {
+            let playlist = {name:"New List "+store.newListCounter,songs:[]}
+            let response = await api.createPlaylist(playlist);
+            if (response.data.success) {
+                let playlist = response.data.playlist;
+                storeReducer({
+                    type: GlobalStoreActionType.CREATE_NEW_LIST,
+                    payload: playlist
+                });
+                store.history.push("/playlist/" + playlist._id);
+            }
+        }
+        asyncCreatePlaylist();
     }
     //*********LACK IMPLEMENTATION ***********/
 
