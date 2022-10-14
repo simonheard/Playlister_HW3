@@ -27,6 +27,14 @@ const ListSelector = () => {
                 selected={false}
             />
         ))
+        if (store.isDeleteListModalOpen()){
+            console.log("delete list modal open");
+            deleteListModal = 
+            <DeleteListModal
+                isOpenCallback={store.isDeleteListModalOpen}
+                hideModalCallback={store.hideModal}
+            />
+        }
     }
     return (
         <div id="playlist-selector">
@@ -43,6 +51,7 @@ const ListSelector = () => {
                     listCard
                 }
             </div>
+            {deleteListModal}
         </div>)
 }
 

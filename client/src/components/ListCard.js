@@ -31,6 +31,12 @@ function ListCard(props) {
         toggleEdit();
     }
 
+    function handleDeleteList(event){
+        event.stopPropagation();
+        console.log("Delete button pressed. ID: "+idNamePair._id);
+        store.markListForDeletion(idNamePair._id);
+    }
+
     function toggleEdit() {
         let newActive = !editActive;
         if (newActive) {
@@ -49,6 +55,8 @@ function ListCard(props) {
     function handleUpdateText(event) {
         setText(event.target.value );
     }
+
+
 
     let selectClass = "unselected-list-card";
     if (selected) {
@@ -76,6 +84,7 @@ function ListCard(props) {
                 id={"delete-list-" + idNamePair._id}
                 className="list-card-button"
                 value={"\u2715"}
+                onClick={handleDeleteList}
             />
             <input
                 disabled={cardStatus}

@@ -14,6 +14,13 @@ export const GlobalStoreContext = createContext({});
     @author McKilla Gorilla
 */
 
+const CurrentModal = {
+    NONE: "NONE",
+    DELETE_LIST : "DELETE_LIST",
+    EDIT_SONG : "EDIT_SONG",
+    REMOVE_SONG : "REMOVE_SONG"
+}
+
 // THESE ARE ALL THE TYPES OF UPDATES TO OUR GLOBAL
 // DATA STORE STATE THAT CAN BE PROCESSED
 export const GlobalStoreActionType = {
@@ -23,6 +30,7 @@ export const GlobalStoreActionType = {
     LOAD_ID_NAME_PAIRS: "LOAD_ID_NAME_PAIRS",
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
+    MARK_LIST_FOR_DELETION: "MARK_LIST_FOR_DELETION",
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -36,7 +44,11 @@ export const useGlobalStore = () => {
         idNamePairs: [],
         currentList: null,
         newListCounter: 0,
-        listNameActive: false
+        listNameActive: false,
+        currentModal: CurrentModal.NONE,
+        listKeyPairMarkedForDeletion: null,
+        currentSong: null,
+        currentSongIndex: -1,
     });
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
@@ -86,7 +98,9 @@ export const useGlobalStore = () => {
                     idNamePairs: store.idNamePairs,
                     currentList: null,
                     newListCounter: store.newListCounter,
-                    listNameActive: false
+                    listNameActive: false,
+                    currentModal: CurrentModal.NONE,
+                    listKeyPairMarkedForDeletion: payload
                 });
             }
             // UPDATE A LIST
@@ -106,6 +120,13 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     listNameActive: true
                 });
+            }
+            case GlobalStoreActionType.SET_CURRENT_MODAL: {
+                return setStore({
+                    currentModal: payload.newModalState,
+                    currentSong: payload.song,
+                    currentSongIndex: payload.songId
+                })
             }
             default:
                 return store;
@@ -160,7 +181,7 @@ export const useGlobalStore = () => {
     //*********LACK IMPLEMENTATION ***********/
     store.createPlaylist = function () {
         async function asyncCreatePlaylist() {
-            let playlist = {name:"New List "+store.newListCounter,songs:[]}
+            let playlist = {name:"New Playlist "+store.newListCounter,songs:[]}
             let response = await api.createPlaylist(playlist);
             if (response.data.success) {
                 let playlist = response.data.playlist;
@@ -168,7 +189,6 @@ export const useGlobalStore = () => {
                     type: GlobalStoreActionType.CREATE_NEW_LIST,
                     payload: playlist
                 });
-                store.history.push("/playlist/" + playlist._id);
             }
         }
         asyncCreatePlaylist();
@@ -279,6 +299,36 @@ export const useGlobalStore = () => {
         });
     }
 
+    store.markListForDeletion = function (id) {
+        storeReducer({
+            type:GlobalStoreActionType.MARK_LIST_FOR_DELETION,
+            payload: id
+        })
+        store.showDeleteListModal();
+    }
+    
+    store.setCurrentModal = function(newModalState, songId, song) {
+        storeReducer({
+            type:GlobalStoreActionType.SET_CURRENT_MODAL,
+            payload: {
+                newModalState: newModalState,
+                songId: songId,
+                song: song
+            }
+        })
+    }
+
+    store.showDeleteListModal = function() {
+        store.setCurrentModal(CurrentModal.DELETE_LIST, -1, null)
+    }
+
+
+    store.hideModal = function() {
+        this.setCurrentModal(CurrentModal.NONE, -1, null)
+    }
+    store.isDeleteListModalOpen = function() {return this.store.currentModal === CurrentModal.DELETE_LIST;}
+    store.isEditSongModalOpen = function() {return this.store.currentModal === CurrentModal.EDIT_SONG;}
+    store.isRemoveSongModalOpen = function() {return this.store.currentModal === CurrentModal.REMOVE_SONG;}
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
     return { store, storeReducer };
 }
