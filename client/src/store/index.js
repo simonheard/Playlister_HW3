@@ -246,6 +246,30 @@ export const useGlobalStore = () => {
         list.songs.pop();
         store.updateCurrentList();
     }
+    store.addMoveSongTransaction = function(start, end){
+        let transaction = new MoveSong_Transaction(store, start, end);
+        tps.addTransaction(transaction);
+    }
+    store.moveSong = function (start, end) {
+        start = parseInt(start);
+        end = parseInt(end);
+        let list = store.currentList;
+        if(start < end) {
+            let temp = list.songs[start];
+            for (let i = start; i < end; i++){
+                list.songs[i] = list.songs[(i+1)];
+            }
+            list.songs[end] = temp;
+        }
+        else if(start > end) {
+            let temp = list.songs[start];
+            for (let i = start; i > end; i--){
+                list.songs[i] = list.songs[(i-1)];
+            }
+            list.songs[end] = temp;
+        }
+        store.updateCurrentList();
+    }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
     store.setIsListNameEditActive = function () {
