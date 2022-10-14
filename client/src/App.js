@@ -1,5 +1,9 @@
 import './App.css';
 import { React } from 'react'
+import { useContext, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
+import { GlobalStoreContext } from './store'
+import  DeleteListModal  from './components/DeleteListModal.js'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { Banner, ListSelector, PlaylistCards, Statusbar } from './components'
 /*
@@ -8,6 +12,13 @@ import { Banner, ListSelector, PlaylistCards, Statusbar } from './components'
     @author McKilla Gorilla
 */
 const App = () => {
+    const { store } = useContext(GlobalStoreContext);
+    store.history = useHistory();
+    let deleteListModal;
+    if (store.isDeleteListModalOpen()){
+        console.log("delete list modal open");
+        deleteListModal = <DeleteListModal/>
+    }
     return (
         <Router>
             <Banner />
@@ -15,6 +26,7 @@ const App = () => {
                 <Route path="/" exact component={ListSelector} />
                 <Route path="/playlist/:id" exact component={PlaylistCards} />
             </Switch>
+            {deleteListModal}
             <Statusbar />
         </Router>
     )

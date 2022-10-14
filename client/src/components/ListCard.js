@@ -33,8 +33,8 @@ function ListCard(props) {
 
     function handleDeleteList(event){
         event.stopPropagation();
-        console.log("Delete button pressed. ID: "+idNamePair._id);
-        store.markListForDeletion(idNamePair._id);
+        console.log("Delete button pressed");
+        store.markListForDeletion(idNamePair);
     }
 
     function toggleEdit() {
