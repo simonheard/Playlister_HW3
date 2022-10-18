@@ -8,16 +8,19 @@ function DeleteListModal() {
     store.history = useHistory();
     //const { isOpenCallback, hideModalCallback } = this.props;
     let name = store.listKeyPairMarkedForDeletion.name;
-    console.log("ID name pairs: ",store.listKeyPairMarkedForDeletion);
+    //console.log("ID name pairs: ",store.listKeyPairMarkedForDeletion);
     function handleConfirm() {
-        console.log("DUMMY comfirm clicked");
+        store.deleteMarkedList();
+        store.hideModal();
+        //console.log("hide Modal called in DeleteListModal");
     }
     function handleCancel() {
-        console.log("DUMMY cancel clicked");
+        store.hideModal();
     }
     let modalClass = "modal";
     if (store.isDeleteListModalOpen()){
-        modalClass += ".is-visible";
+        //console.log("marked OPEN in deleteListModal");
+        modalClass+=" is-visible";
     }
 
     return (

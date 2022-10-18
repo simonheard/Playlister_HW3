@@ -16,9 +16,10 @@ const App = () => {
     store.history = useHistory();
     let deleteListModal;
     if (store.isDeleteListModalOpen()){
-        console.log("delete list modal open");
-        deleteListModal = <DeleteListModal/>
+        //console.log("app.js isDeleteListModalOpen: true");
+        deleteListModal =<DeleteListModal/>
     }
+    
     return (
         <Router>
             <Banner />

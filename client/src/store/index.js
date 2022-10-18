@@ -111,13 +111,14 @@ export const useGlobalStore = () => {
             }
             // PREPARE TO DELETE A LIST
             case GlobalStoreActionType.MARK_LIST_FOR_DELETION: {
+                //console.log(payload)
                 return setStore({
                     idNamePairs: store.idNamePairs,
                     currentList: null,
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     currentModal: CurrentModal.NONE,
-                    listKeyPairMarkedForDeletion: payload,
+                    listKeyPairMarkedForDeletion: payload.listKeyPairMarkedForDeletion,
                     currentSong: store.currentSong,
                     currentSongIndex: store.currentSongIndex,
                 });
@@ -210,7 +211,6 @@ export const useGlobalStore = () => {
     }
 
     //THIS FUNCTION CREATE NEW LIST AND OPEN THE LIST PAGE
-    //*********LACK IMPLEMENTATION ***********/
     store.createPlaylist = function () {
         async function asyncCreatePlaylist() {
             let playlist = {name:"New Playlist "+store.newListCounter,songs:[]}
@@ -221,11 +221,29 @@ export const useGlobalStore = () => {
                     type: GlobalStoreActionType.CREATE_NEW_LIST,
                     payload: playlist
                 });
+                store.loadIdNamePairs();
             }
         }
         asyncCreatePlaylist();
     }
-    //*********LACK IMPLEMENTATION ***********/
+    store.deleteMarkedList = function () {
+        async function asyncDeleteMarkedList() {
+            //console.log("Deleting marked list, ID: ", store.listKeyPairMarkedForDeletion._id);
+            let response = await api.deletePlaylistById(store.listKeyPairMarkedForDeletion._id);
+            if(response.data.success) {
+                // storeReducer({
+                //     type: GlobalStoreActionType.MARK_LIST_FOR_DELETION,
+                //     payload: null
+                // })
+                //console.log("delete Success in server");
+                store.hideModal();
+                store.loadIdNamePairs();
+            }
+        }
+        //store.hideModal();
+        asyncDeleteMarkedList();
+        //store.loadIdNamePairs();
+    }
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = function () {
@@ -332,14 +350,13 @@ export const useGlobalStore = () => {
     }
 
     store.markListForDeletion = function (idNamePair) {
-        console.log("markListForDeletion received idNamePair: ", idNamePair);
         // storeReducer({
         //     type: GlobalStoreActionType.MARK_LIST_FOR_DELETION,
-        //     payload: idNamePair
+        //     payload: {
+        //         listKeyPairMarkedForDeletion : idNamePair
+        //     }
         // })
         store.listKeyPairMarkedForDeletion=idNamePair;
-        console.log("list marked for deletion: ", store.listKeyPairMarkedForDeletion);
-        store.showDeleteListModal();
     }
     
     store.setCurrentModal = function(newModalState, songId, song) {
@@ -350,17 +367,22 @@ export const useGlobalStore = () => {
                 songId: songId,
                 song: song
             }
-        })
-        console.log("Current Modal in store set");
+        });
+        // store.songId = songId;
+        // store.song = song;
+        // store.currentModal = newModalState;
+        //console.log("Current Modal in store set to: ", store.currentModal);
     }
 
     store.showDeleteListModal = function() {
-        store.setCurrentModal(CurrentModal.DELETE_LIST, -1, null)
+        //console.log("show delete list modal");
+        store.setCurrentModal(CurrentModal.DELETE_LIST, -1, null);
     }
 
-
     store.hideModal = function() {
-        this.setCurrentModal(CurrentModal.NONE, -1, null)
+        //console.log("hideModal called");
+        store.setCurrentModal(CurrentModal.NONE, -1, null);
+        store.currentModal = CurrentModal.NONE;
     }
     store.isDeleteListModalOpen = function() {return store.currentModal === CurrentModal.DELETE_LIST;}
     store.isEditSongModalOpen = function() {return store.currentModal === CurrentModal.EDIT_SONG;}

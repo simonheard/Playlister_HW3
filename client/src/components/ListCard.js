@@ -33,8 +33,9 @@ function ListCard(props) {
 
     function handleDeleteList(event){
         event.stopPropagation();
-        console.log("Delete button pressed");
+        //console.log("Delete button pressed");
         store.markListForDeletion(idNamePair);
+        store.showDeleteListModal();
     }
 
     function toggleEdit() {
