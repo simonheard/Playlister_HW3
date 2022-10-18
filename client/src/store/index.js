@@ -214,7 +214,7 @@ export const useGlobalStore = () => {
     //THIS FUNCTION CREATE NEW LIST AND OPEN THE LIST PAGE
     store.createPlaylist = function () {
         async function asyncCreatePlaylist() {
-            let playlist = {name:"New Playlist "+store.newListCounter,songs:[]}
+            let playlist = {name:"New Playlist",songs:[]}
             let response = await api.createPlaylist(playlist);
             if (response.data.success) {
                 let playlist = response.data.playlist;
@@ -424,6 +424,11 @@ export const useGlobalStore = () => {
     store.isDeleteListModalOpen = function() {return store.currentModal === CurrentModal.DELETE_LIST;}
     store.isEditSongModalOpen = function() {return store.currentModal === CurrentModal.EDIT_SONG;}
     store.isDeleteSongModalOpen = function() {return store.currentModal === CurrentModal.REMOVE_SONG;}
+
+    store.canAddSong = function() {return store.currentList}
+    store.canUndo = function() {return tps.hasTransactionToUndo()}
+    store.canRedo = function() {return tps.hasTransactionToRedo()}
+    store.canClose = function() {return store.currentList}
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
     return { store, storeReducer };
 }
