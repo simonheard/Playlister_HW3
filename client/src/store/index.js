@@ -208,6 +208,7 @@ export const useGlobalStore = () => {
             type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
             payload: {}
         });
+        tps.clearAllTransactions();
     }
 
     //THIS FUNCTION CREATE NEW LIST AND OPEN THE LIST PAGE
@@ -356,6 +357,19 @@ export const useGlobalStore = () => {
         store.updateCurrentList();
     }
 
+    store.addEditSongTransaction = (index, oldSong, newSong) => {
+        let transaction = new EditSong_Transaction(store, index, oldSong, newSong);
+        tps.addTransaction(transaction);
+    }
+    store.editSong = (index, song) => {
+        let list = null;
+        if(store.currentList){
+            list = store.currentList;
+        }
+        list.songs[index] = song;
+        store.updateCurrentList();
+    }
+
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
     store.setIsListNameEditActive = function () {
         storeReducer({
@@ -389,6 +403,10 @@ export const useGlobalStore = () => {
         //console.log("Current Modal in store set to: ", store.currentModal);
     }
 
+    store.showEditSongModal = function (index, song) {
+        store.setCurrentModal(CurrentModal.EDIT_SONG, index, song);
+        //console.log("index and song: ", index, song);
+    }
     store.showDeleteSongModal = function(index, song) {
         store.setCurrentModal(CurrentModal.REMOVE_SONG, index, song);
         //console.log("index and song: ", index, song);

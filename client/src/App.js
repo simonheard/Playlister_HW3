@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom'
 import { GlobalStoreContext } from './store'
 import  DeleteListModal  from './components/DeleteListModal.js'
 import DeleteSongModal from './components/DeleteSongModal.js'
+import EditSongModal from './components/EditSongModal.js'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { Banner, ListSelector, PlaylistCards, Statusbar } from './components'
 /*
@@ -17,6 +18,7 @@ const App = () => {
     store.history = useHistory();
     let deleteListModal;
     let deleteSongModal;
+    let editSongModal;
     if (store.isDeleteListModalOpen()){
         //console.log("app.js isDeleteListModalOpen: true");
         deleteListModal =<DeleteListModal/>
@@ -24,6 +26,10 @@ const App = () => {
     if(store.isDeleteSongModalOpen()){
         //console.log("app.js isDeleteSongModalOpen: true");
         deleteSongModal = <DeleteSongModal/>
+    }
+    if(store.isEditSongModalOpen()){
+        //console.log("app.js isEditSongModalOpen: true");
+        editSongModal = <EditSongModal/>
     }
     
     return (
@@ -35,6 +41,7 @@ const App = () => {
             </Switch>
             {deleteListModal}
             {deleteSongModal}
+            {editSongModal}
             <Statusbar />
         </Router>
     )

@@ -36,6 +36,10 @@ function SongCard(props) {
         event.stopPropagation();
         store.showDeleteSongModal(index, song);
     }
+    function handleEditSong(event){
+        event.stopPropagation();
+        store.showEditSongModal(index, song);
+    }
 
     let cardClass = "list-card unselected-list-card";
     return (
@@ -48,6 +52,7 @@ function SongCard(props) {
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
+            onDoubleClick={handleEditSong}
             draggable="true"
         >
             {index + 1}.
