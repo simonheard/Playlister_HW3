@@ -32,6 +32,10 @@ function SongCard(props) {
         setDraggedTo(false);
         store.addMoveSongTransaction(sourceId, targetId);
     }
+    function handleDeleteSong(event){
+        event.stopPropagation();
+        store.showDeleteSongModal(index, song);
+    }
 
     let cardClass = "list-card unselected-list-card";
     return (
@@ -57,6 +61,7 @@ function SongCard(props) {
                 type="button"
                 id={"remove-song-" + index}
                 className="list-card-button"
+                onClick={handleDeleteSong}
                 value={"\u2715"}
             />
         </div>

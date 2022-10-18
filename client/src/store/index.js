@@ -341,6 +341,21 @@ export const useGlobalStore = () => {
         store.updateCurrentList();
     }
 
+    store.addDeleteSongTransaction = () => {
+        //console.log("adding transaction, current index and song: ", store.currentSongIndex, store.currentSong);
+        let transaction = new DeleteSong_Transaction(store, store.currentSongIndex, store.currentSong);
+        tps.addTransaction(transaction);
+    }
+    store.deleteSong = (posInList) => {
+        store.currentList.songs.splice(posInList, 1);
+        store.updateCurrentList();
+    }
+
+    store.undoDeleteSong = (posInList, songObject) => {
+        store.currentList.songs.splice(posInList, 0, songObject);
+        store.updateCurrentList();
+    }
+
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
     store.setIsListNameEditActive = function () {
         storeReducer({
@@ -374,6 +389,10 @@ export const useGlobalStore = () => {
         //console.log("Current Modal in store set to: ", store.currentModal);
     }
 
+    store.showDeleteSongModal = function(index, song) {
+        store.setCurrentModal(CurrentModal.REMOVE_SONG, index, song);
+        //console.log("index and song: ", index, song);
+    }
     store.showDeleteListModal = function() {
         //console.log("show delete list modal");
         store.setCurrentModal(CurrentModal.DELETE_LIST, -1, null);
@@ -386,7 +405,7 @@ export const useGlobalStore = () => {
     }
     store.isDeleteListModalOpen = function() {return store.currentModal === CurrentModal.DELETE_LIST;}
     store.isEditSongModalOpen = function() {return store.currentModal === CurrentModal.EDIT_SONG;}
-    store.isRemoveSongModalOpen = function() {return store.currentModal === CurrentModal.REMOVE_SONG;}
+    store.isDeleteSongModalOpen = function() {return store.currentModal === CurrentModal.REMOVE_SONG;}
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
     return { store, storeReducer };
 }
